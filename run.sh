@@ -69,4 +69,4 @@ g++ -m64 -no-pie -o QuadraticFormula.out Second_degree.o isfloat.o Quad_library.
 #Run the program QuadraticFormula:
 ./QuadraticFormula.out
 
-echo "The script file will terminate. Have a nice day!"
+#echo "The script file will terminate. Have a nice day!"
