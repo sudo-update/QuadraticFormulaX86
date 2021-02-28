@@ -48,7 +48,15 @@
 ;   Assemble:        nasm -f elf64 -l Quadratic.lis -o Quadratic.o Quadratic.asm
 ;------------------------------------------------------------------------------;
 ;------------------------------------------------------------------------------;
-
+;extra note: there was a proposed research question in the prompt.  In this
+;program, if you input an exceptionally long number as a coefficient (one that
+;is so long, it obviously won't fit inside a 64bit register), that number will
+;be accepted as a float by isfloat, and then truncated to fit into a 64bit
+;register, while preserving the most significant digit.
+;Ie: 4.123456789012345678901234567890123456789012345678901234567890
+;will still be output (%8.12 was used) as a very similar value of:
+;      4.123456789012
+;------------------------------------------------------------------------------;
 extern show_no_root
 extern show_one_root
 extern show_two_root
@@ -60,7 +68,7 @@ global Quadratic
 segment .data
 welcome db "This program will find the roots of any quadratic equation.", 10, 0
 coefficients_prompt db "Please enter the three floating point coefficients of a quadratic equation,", 10, "  including the decimal point (enter 1.0 instead of 1),", 10, "  in the order a, b, c", 10, "  separated by the end of line character:   ", 0
-reaffirm_equation db "Thank you.  The equation is:", 10, "    (%8.6lf)x^2  +  (%8.6lf)x  +  (%8.6lf)  =  0.0", 10, 0
+reaffirm_equation db "Thank you.  The equation is:", 10, "    (%8.12lf)x^2  +  (%8.12lf)x  +  (%8.12lf)  =  0.0", 10, 0
 goodbye_one_root db "The root will be returned to the caller function.", 10, 0
 goodbye_two_roots db "One of these roots will be returned to the caller function.", 10, 0
 goodbye_no_roots db "0 will be returned to the caller function", 10, 0
