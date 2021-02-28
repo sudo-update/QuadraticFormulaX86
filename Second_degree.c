@@ -16,7 +16,7 @@
 // GNU Lesser General Public License 3.0 should have been distributed with this
 // function.  If the LGPL does not accompany this software then it is available
 // here:
-// <https:;www.gnu.org/licenses/>.
+// <https::www.gnu.org/licenses/>.
 // *****************************************************************************
 //
 //
