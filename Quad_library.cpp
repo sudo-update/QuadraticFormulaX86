@@ -5,7 +5,7 @@ extern "C" void show_one_root(double root);
 extern "C" void show_two_root(double root1, double root2);
 
 void show_no_root() {
-  printf("This equation has no roots.\n");
+  printf("This equation has no real roots.\n");
 }
 void show_one_root(double root) {
   printf("The root of this equation is %8.6lf\n", root);
