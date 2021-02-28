@@ -1,3 +1,54 @@
+;******************************************************************************;
+;Program name: "QuadraticFormula".  This program reads the three coeffeicients
+;(a, b, c) of a quadratic equation (a)x^2 + (b)x + (c) = 0 through the standard
+;input device.  It then calculates the
+;roots of said equation and outputs the result to the standard output device.
+;One root is returned.  If there are no real roots, 0 is returned.
+;Copyright (C) 2021 Sean Javiya.                                                                           *
+;
+; This file is part of the software QuadraticFormula                                                                   *
+; QuadraticFormula is free software: you can redistribute it and/or modify it
+; under the terms of the GNU Lesser General Public License version 3 as
+; published by the Free Software Foundation.  This program is distributed in
+; the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+; implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+; See the GNU Lesser General Public License for more details.  A copy of the
+; GNU Lesser General Public License 3.0 should have been distributed with this
+; function.  If the LGPL does not accompany this software then it is available
+; here:
+; <https:;www.gnu.org/licenses/>.
+; *****************************************************************************
+;
+;
+;------------------------------------------------------------------------------;
+;------------------------------------------------------------------------------;
+;Author information
+;  Author name: Sean Javiya
+;  Author email: seanjaviya@csu.fullerton.edu
+;
+;Program information
+;  Program name: QuadraticFormula
+;  Programming languages: One driver module in C, one module in X86, two library
+;                         modules in C++, and one bash file
+;  Date program began: 2021-Feb-19
+;  Date of last update: 2021-Feb-27
+;  Date of reorganization of comments: 2021-Feb-27
+;  Files in this program: Quad_library.cpp, Quadratic.asm, Second_degree.c,
+;                         isfloat.cpp, build.sh
+;  Status: Finished.
+;  The program was tested extensively with no errors in (Tuffix) Ubuntu 20.04
+;Purpose
+;  This program will calculate the real roots of a quadratic equation.  This
+;  program will also be submit (for credit) for an assignment conducted during
+;  my graduate studies program.
+;This file
+;   File name: Quadratic.asm
+;   Language: X86 with Intel syntax.
+;   Max page width: 132 columns  (this file was not optimized for printing out)
+;   Assemble:        nasm -f elf64 -l Quadratic.lis -o Quadratic.o Quadratic.asm
+;------------------------------------------------------------------------------;
+;------------------------------------------------------------------------------;
+
 extern show_no_root
 extern show_one_root
 extern show_two_root
@@ -12,9 +63,10 @@ coefficients_prompt db "Please enter the three floating point coefficients of a 
 reaffirm_equation db "Thank you.  The equation is:", 10, "    (%8.6lf)x^2  +  (%8.6lf)x  +  (%8.6lf)  =  0.0", 10, 0
 goodbye_one_root db "The root will be returned to the caller function.", 10, 0
 goodbye_two_roots db "One of these roots will be returned to the caller function.", 10, 0
+goodbye_no_roots db "0 will be returned to the caller function", 10, 0
 scan_one_string db "%s", 0
-unexpected_error db "unexpected flow error.", 10, 0
-error_info_message db "Invalid input data detected.  You may run this program again.", 10, 0
+unexpected_error_message db "unexpected flow error.", 10, 0
+invalid_input_message db "Invalid input data detected.  You may run this program again.", 10, 0
 linear_equation_message db "A quadratic equation follows the format: (a)x^2 + (b)x + c = 0", 10, "Where (a) does not equal 0.", 10, "You entered (a) = 0. Hence, the equation is linear.", 10, 0
 segment .bss
 segment .text
@@ -46,13 +98,13 @@ pushf
 ;say hello
 push qword 0
 mov rax, 0
-mov rdi, welcome
+mov rdi, welcome ;"This program will find the roots of any quadratic equation.",10
 call printf
 pop rax
 ;prompt for values
 push qword 0
 mov rax, 0
-mov rdi, coefficients_prompt
+mov rdi, coefficients_prompt ;"Please enter the three floating point coefficients of a quadratic equation,", 10, "  including the decimal point (enter 1.0 instead of 1),", 10, "  in the order a, b, c", 10, "  separated by the end of line character:   "
 call printf
 pop rax
 ;------------------------------------------------------------------------------;
@@ -66,12 +118,9 @@ pop rax
 ;                                    1)
 ;------------------------------------------------------------------------------;
 ;scan first value to the stack
-push qword 0
-push qword 0
-push qword 0
-push qword 0
+sub rsp, 1536
 mov rax, 0
-mov rdi, scan_one_string
+mov rdi, scan_one_string ;%s
 mov rsi, rsp
 call scanf
 ;check if value on stack is a float
@@ -86,20 +135,14 @@ mov rax, 1
 mov rdi, rsp
 call atof
 movsd xmm15, xmm0                   ;xmm15 holds a
-pop rax
-pop rax
-pop rax
-pop rax
+add rsp, 1536
 ;------------------------------------------------------------------------------;
 ;                                    2)
 ;------------------------------------------------------------------------------;
 ;scan second value to the stack
-push qword 0
-push qword 0
-push qword 0
-push qword 0
+sub rsp, 1536
 mov rax, 0
-mov rdi, scan_one_string
+mov rdi, scan_one_string ;%s
 mov rsi, rsp
 call scanf
 ;check if value on stack is a float
@@ -114,20 +157,14 @@ mov rax, 1
 mov rdi, rsp
 call atof
 movsd xmm14, xmm0                   ;xmm14 holds b
-pop rax
-pop rax
-pop rax
-pop rax
+add rsp, 1536
 ;------------------------------------------------------------------------------;
 ;                                    3)
 ;------------------------------------------------------------------------------;
 ;scan third value onto the stack
-push qword 0
-push qword 0
-push qword 0
-push qword 0
+sub rsp, 1536
 mov rax, 0
-mov rdi, scan_one_string
+mov rdi, scan_one_string ;%s
 mov rsi, rsp
 call scanf
 ;check if value on stack is a float
@@ -142,10 +179,7 @@ mov rax, 1
 mov rdi, rsp
 call atof
 movsd xmm13, xmm0                   ;xmm13 holds c
-pop rax
-pop rax
-pop rax
-pop rax
+add rsp, 1536
 ;------------------------------------------------------------------------------;
                                     ;4)
 ;------------------------------------------------------------------------------;
@@ -176,7 +210,7 @@ push qword 0
 push qword 0
 push qword 0
 mov rax, 3
-mov rdi, reaffirm_equation
+mov rdi, reaffirm_equation ;"Thank you.  The equation is:", 10, "    (%8.6lf)x^2  +  (%8.6lf)x  +  (%8.6lf)  =  0.0", 10
 movsd xmm0, xmm15 ;a
 movsd xmm1, xmm14 ;b
 movsd xmm2, xmm13 ;c
@@ -228,16 +262,11 @@ jmp unexpected_error_detected
 ;------------------------------------------------------------------------------;
 ;                            jump cases block BEGIN
 ;there are three sections of this block.
-;I) scan jump
-;II) calculation jumps and
-;III) error jumps
+;I) calculation jumps and
+;II) error jumps
 ;------------------------------------------------------------------------------;
 ;------------------------------------------------------------------------------;
-;                             I) scan jump
-;------------------------------------------------------------------------------;
-;jump here
-;------------------------------------------------------------------------------;
-;                             II) calculation jumps
+;                             I) calculation jumps
 ;------------------------------------------------------------------------------;
 ;positive dsicriminant area
 ;two roots with the following formulas:
@@ -272,7 +301,7 @@ call show_two_root
 ;say goodbye
 push qword 0
 mov rax, 0
-mov rdi, goodbye_two_roots
+mov rdi, goodbye_two_roots ;"One of these roots will be returned to the caller function.", 10
 call printf
 pop rax
 movsd xmm0, xmm12    ;return first root
@@ -297,7 +326,7 @@ call show_one_root
 ;say goodbye
 push qword 0
 mov rax, 0
-mov rdi, goodbye_one_root
+mov rdi, goodbye_one_root ;"The root will be returned to the caller function.", 10
 call printf
 pop rax
 movsd xmm0, xmm14   ;return our root
@@ -312,17 +341,22 @@ negative_discriminant:
 ;xmm12 hold discriminant
 ;however, no further calculation is necessary for this program's desired functionality
 call show_no_root
+push qword 0
+mov rax, 0
+mov rdi, goodbye_no_roots ;"0 will be returned to the caller function", 10
+call printf
+pop rax
 mov rax, 0
 cvtsi2sd xmm0, rax
 jmp restore_registers
 ;------------------------------------------------------------------------------;
-;                                  III) error jumps
+;                                  II) error jumps
 ;------------------------------------------------------------------------------;
 ;unexpected error handling area
 unexpected_error_detected:
 push qword 0
 mov rax, 0
-mov rdi, unexpected_error
+mov rdi, unexpected_error_message ;"unexpected flow error.", 10
 call printf
 pop rax
 ;prepare to return 0
@@ -334,7 +368,7 @@ jmp restore_registers
 not_a_quadratic_detected:
 push qword 0
 mov rax, 0
-mov rdi, linear_equation_message
+mov rdi, linear_equation_message ;"A quadratic equation follows the format: (a)x^2 + (b)x + c = 0", 10, "Where (a) does not equal 0.", 10, "You entered (a) = 0. Hence, the equation is linear.", 10
 call printf
 pop rax
 ;prepare to return 0
@@ -344,14 +378,10 @@ jmp restore_registers
 ;------------------------------------------------------------------------------;
 ;invalid input handling area
 invalid_inputs_detected:
-pop rax
-pop rax
-pop rax
-pop rax
-
+add rsp, 1536
 push qword 0
 mov rax, 0
-mov rdi, error_info_message
+mov rdi, invalid_input_message ;"Invalid input data detected.  You may run this program again.", 10
 call printf
 pop rax
 ;prepare to return 0
