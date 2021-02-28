@@ -34,7 +34,7 @@
 ;  Date of last update: 2021-Feb-27
 ;  Date of reorganization of comments: 2021-Feb-27
 ;  Files in this program: Quad_library.cpp, Quadratic.asm, Second_degree.c,
-;                         isfloat.cpp, build.sh
+;                         isfloat.cpp, run.sh
 ;  Status: Finished.
 ;  The program was tested extensively with no errors in (Tuffix) Ubuntu 20.04
 ;Purpose
